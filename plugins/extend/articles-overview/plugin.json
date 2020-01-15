@@ -1,0 +1,15 @@
+{
+    "name": "Articles Overview Stats",
+    "description": "Přehled stavu článků na hlavní straně administrace",
+    "version": "1.0",
+    "api": "^8.0",
+    "url": "https://jdanek.eu/",
+    "class": "ArticlesOverviewPlugin",
+    "langs": {
+        "aos": "Resources/languages/"
+    },
+    "events.admin": [
+        ["admin.head", "$this::onHead"],
+        ["admin.index.after_table", "$this::onAfterTable"]
+    ]
+}
