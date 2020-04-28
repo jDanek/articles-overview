@@ -12,7 +12,7 @@ Preview
 Requirements
 ************
 
-- PHP 5.3.0+
+- PHP 5.3+
 - SunLight CMS 8
 
 Installation
