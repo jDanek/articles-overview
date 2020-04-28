@@ -8,15 +8,15 @@ use Sunlight\Plugin\ExtendPlugin;
 class ArticlesOverviewPlugin extends ExtendPlugin
 {
 
-    protected $data = [
+    protected $data = array(
 
-        'stats' => [
+        'stats' => array(
             'total' => 0,
             'visible' => 0,
             'public' => 0,
             'confirmed' => 0,
-        ]
-    ];
+        )
+    );
 
     function onHead($args)
     {
