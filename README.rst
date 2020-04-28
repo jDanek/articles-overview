@@ -1,5 +1,5 @@
-Articles Overview
-#################
+Articles Overview Plugin
+########################
 
 Graph showing the status of your own articles.
 
