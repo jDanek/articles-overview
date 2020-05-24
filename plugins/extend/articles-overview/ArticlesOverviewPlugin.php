@@ -10,9 +10,9 @@ class ArticlesOverviewPlugin extends ExtendPlugin
 {
 
     protected $columns = array(
-        array('name' => 'public', 'label' => ''),
-        array('name' => 'visible', 'label' => ''),
-        array('name' => 'confirmed', 'label' => ''),
+        array('name' => 'public', 'value' => 1, 'label' => ''),
+        array('name' => 'visible', 'value' => 1, 'label' => ''),
+        array('name' => 'confirmed', 'value' => 1, 'label' => ''),
     );
 
     function onHead($args)
@@ -77,7 +77,7 @@ class ArticlesOverviewPlugin extends ExtendPlugin
         $data['stats']['total'] = DB::size($q);
         while ($a = DB::row($q)) {
             foreach ($this->columns as $column) {
-                if ($a[$column['name']] == 1) {
+                if ($a[$column['name']] == (isset($column['value']) ? $column['value'] : 1)) {
                     if (!isset($data['stats'][$column['name']])) {
                         $data['stats'][$column['name']] = 0;
                     }
