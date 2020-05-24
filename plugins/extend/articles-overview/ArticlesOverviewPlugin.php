@@ -62,7 +62,7 @@ class ArticlesOverviewPlugin extends ExtendPlugin
 
     function getArticlesStats()
     {
-        Extend::call('aos.stats.columns', ['columns' => &$this->columns]);
+        Extend::call('aos.stats.columns', array('columns' => &$this->columns));
 
         // ziskani pouze jmen sloupcu
         $query_columns = array_map(function ($value) {
@@ -77,10 +77,10 @@ class ArticlesOverviewPlugin extends ExtendPlugin
         $data['stats']['total'] = DB::size($q);
         while ($a = DB::row($q)) {
             foreach ($this->columns as $column) {
+                if (!isset($data['stats'][$column['name']])) {
+                    $data['stats'][$column['name']] = 0;
+                }
                 if ($a[$column['name']] == (isset($column['value']) ? $column['value'] : 1)) {
-                    if (!isset($data['stats'][$column['name']])) {
-                        $data['stats'][$column['name']] = 0;
-                    }
                     $data['stats'][$column['name']]++;
                 }
             }
