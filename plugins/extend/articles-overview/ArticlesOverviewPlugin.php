@@ -3,24 +3,21 @@
 namespace SunlightExtend\ArticlesOverview;
 
 use Sunlight\Database\Database as DB;
+use Sunlight\Extend;
 use Sunlight\Plugin\ExtendPlugin;
 
 class ArticlesOverviewPlugin extends ExtendPlugin
 {
 
-    protected $data = array(
-
-        'stats' => array(
-            'total' => 0,
-            'visible' => 0,
-            'public' => 0,
-            'confirmed' => 0,
-        )
+    protected $columns = array(
+        array('name' => 'public', 'label' => ''),
+        array('name' => 'visible', 'label' => ''),
+        array('name' => 'confirmed', 'label' => ''),
     );
 
     function onHead($args)
     {
-        $this->getArticles();
+        $data = $this->getArticlesStats();
 
         $args['js_after'] .= "\n<script type='text/javascript' src='https://www.gstatic.com/charts/loader.js'></script>";
         $args['js_after'] .= "\n<script type='text/javascript'>
@@ -31,16 +28,19 @@ class ArticlesOverviewPlugin extends ExtendPlugin
       function drawChart() {
           
         var tick_list = [];
-        for (var i = 0; i <= " . $this->data['stats']['total'] . "; i++) {
+        for (var i = 0; i <= " . $data['stats']['total'] . "; i++) {
             tick_list.push(i);
         }
 
        var data = google.visualization.arrayToDataTable([
         ['" . _lang('aos.chart.props') . "', '" . _lang('aos.chart.state') . "','" . _lang('aos.chart.diff') . "'],
-        ['" . _lang('aos.stats.public') . "', " . $this->data['stats']['public'] . "," . ($this->data['stats']['total'] - $this->data['stats']['public']) . "],
-        ['" . _lang('aos.stats.visible') . "', " . $this->data['stats']['visible'] . "," . ($this->data['stats']['total'] - $this->data['stats']['visible']) . "],
-        ['" . _lang('aos.stats.confirmed') . "', " . $this->data['stats']['confirmed'] . "," . ($this->data['stats']['total'] - $this->data['stats']['confirmed']) . "]
-      ]);
+        ";
+
+        foreach ($this->columns as $column) {
+            $args['js_after'] .= "['" . ($column['label'] == '' ? _lang('aos.stats.' . $column['name']) : $column['label']) . "', " . $data['stats'][$column['name']] . "," . ($data['stats']['total'] - $data['stats'][$column['name']]) . "],";
+        }
+
+        $args['js_after'] .= "]);
 
       var options = {
         title: '" . _lang('aos.header') . "',
@@ -58,26 +58,34 @@ class ArticlesOverviewPlugin extends ExtendPlugin
       chart.draw(data, options);
     }
     </script>";
-
     }
 
-    function getArticles()
+    function getArticlesStats()
     {
-        $q = DB::query("SELECT visible, public, confirmed FROM " . _article_table . " WHERE author=" . _user_id);
+        Extend::call('aos.stats.columns', ['columns' => &$this->columns]);
 
-        $this->data['stats']['total'] = DB::size($q);
+        // ziskani pouze jmen sloupcu
+        $query_columns = array_map(function ($value) {
+            return  $value['name'];
+        }, $this->columns);
 
+        // dotaz
+        $q = DB::query("SELECT " . implode(",", $query_columns) . " FROM " . _article_table . " WHERE author=" . _user_id);
+
+        // statistika
+        $data = array();
+        $data['stats']['total'] = DB::size($q);
         while ($a = DB::row($q)) {
-            if ($a['visible'] == 1) {
-                $this->data['stats']['visible']++;
-            }
-            if ($a['public'] == 1) {
-                $this->data['stats']['public']++;
-            }
-            if ($a['confirmed'] == 1) {
-                $this->data['stats']['confirmed']++;
+            foreach ($this->columns as $column) {
+                if ($a[$column['name']] == 1) {
+                    if (!isset($data['stats'][$column['name']])) {
+                        $data['stats'][$column['name']] = 0;
+                    }
+                    $data['stats'][$column['name']]++;
+                }
             }
         }
+        return $data;
     }
 
     function onAfterTable($args)
@@ -86,5 +94,3 @@ class ArticlesOverviewPlugin extends ExtendPlugin
         $args['output'] .= $output;
     }
 }
-
-
