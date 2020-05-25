@@ -19,8 +19,10 @@ class ArticlesOverviewPlugin extends ExtendPlugin
     {
         $data = $this->getArticlesStats();
 
-        $args['js_after'] .= "\n<script type='text/javascript' src='https://www.gstatic.com/charts/loader.js'></script>";
-        $args['js_after'] .= "\n<script type='text/javascript'>
+        if ($data['stats']['total'] > 0) {
+
+            $args['js_after'] .= "\n<script type='text/javascript' src='https://www.gstatic.com/charts/loader.js'></script>";
+            $args['js_after'] .= "\n<script type='text/javascript'>
 
       google.charts.load('current', {'packages':['corechart','bar']});
       google.charts.setOnLoadCallback(drawChart);
@@ -36,11 +38,11 @@ class ArticlesOverviewPlugin extends ExtendPlugin
         ['" . _lang('aos.chart.props') . "', '" . _lang('aos.chart.state') . "','" . _lang('aos.chart.diff') . "'],
         ";
 
-        foreach ($this->columns as $column) {
-            $args['js_after'] .= "['" . ($column['label'] == '' ? _lang('aos.stats.' . $column['name']) : $column['label']) . "', " . $data['stats'][$column['name']] . "," . ($data['stats']['total'] - $data['stats'][$column['name']]) . "],";
-        }
+            foreach ($this->columns as $column) {
+                $args['js_after'] .= "['" . ($column['label'] == '' ? _lang('aos.stats.' . $column['name']) : $column['label']) . "', " . $data['stats'][$column['name']] . "," . ($data['stats']['total'] - $data['stats'][$column['name']]) . "],";
+            }
 
-        $args['js_after'] .= "]);
+            $args['js_after'] .= "]);
 
       var options = {
         title: '" . _lang('aos.header') . "',
@@ -58,6 +60,7 @@ class ArticlesOverviewPlugin extends ExtendPlugin
       chart.draw(data, options);
     }
     </script>";
+        }
     }
 
     function getArticlesStats()
