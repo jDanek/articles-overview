@@ -19,7 +19,7 @@ class ArticlesOverviewPlugin extends ExtendPlugin
     {
         $data = $this->getArticlesStats();
 
-        if ($data['stats']['total'] > 0) {
+        if ($data['stats']['total'] > 0 && Request::get('p') === 'index') {
 
             $args['js_after'] .= "\n<script type='text/javascript' src='https://www.gstatic.com/charts/loader.js'></script>";
             $args['js_after'] .= "\n<script type='text/javascript'>
