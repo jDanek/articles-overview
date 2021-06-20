@@ -1,4 +1,5 @@
 {
+    "$schema": "../../../system/schema/extend.json",
     "name": "Articles Overview Stats",
     "description": "Přehled stavu článků na hlavní straně administrace",
     "version": "1.0",
