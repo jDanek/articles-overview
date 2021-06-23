@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'header' => 'Statistics of my articles',
 
     'stats.total' => 'Total amount',
@@ -12,4 +12,4 @@ return array(
     'chart.props' => 'Property',
     'chart.state' => 'State',
     'chart.diff' => 'Diff',
-);
+];

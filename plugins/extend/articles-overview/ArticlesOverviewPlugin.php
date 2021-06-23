@@ -5,17 +5,19 @@ namespace SunlightExtend\ArticlesOverview;
 use Sunlight\Database\Database as DB;
 use Sunlight\Extend;
 use Sunlight\Plugin\ExtendPlugin;
+use Sunlight\Util\Request;
 
 class ArticlesOverviewPlugin extends ExtendPlugin
 {
 
-    protected $columns = array(
-        array('name' => 'public', 'value' => 1, 'label' => ''),
-        array('name' => 'visible', 'value' => 1, 'label' => ''),
-        array('name' => 'confirmed', 'value' => 1, 'label' => ''),
-    );
+    /** @var array[]  */
+    protected $columns = [
+        ['name' => 'public', 'value' => 1, 'label' => ''],
+        ['name' => 'visible', 'value' => 1, 'label' => ''],
+        ['name' => 'confirmed', 'value' => 1, 'label' => ''],
+    ];
 
-    function onHead($args)
+    public function onHead($args): void
     {
         $data = $this->getArticlesStats();
 
@@ -63,9 +65,9 @@ class ArticlesOverviewPlugin extends ExtendPlugin
         }
     }
 
-    function getArticlesStats()
+    public function getArticlesStats(): array
     {
-        Extend::call('aos.stats.columns', array('columns' => &$this->columns));
+        Extend::call('aos.stats.columns', ['columns' => &$this->columns]);
 
         // ziskani pouze jmen sloupcu
         $query_columns = array_map(function ($value) {
@@ -76,14 +78,14 @@ class ArticlesOverviewPlugin extends ExtendPlugin
         $q = DB::query("SELECT " . implode(",", $query_columns) . " FROM " . _article_table . " WHERE author=" . _user_id);
 
         // statistika
-        $data = array();
+        $data = [];
         $data['stats']['total'] = DB::size($q);
         while ($a = DB::row($q)) {
             foreach ($this->columns as $column) {
                 if (!isset($data['stats'][$column['name']])) {
                     $data['stats'][$column['name']] = 0;
                 }
-                if ($a[$column['name']] == (isset($column['value']) ? $column['value'] : 1)) {
+                if ($a[$column['name']] == ($column['value'] ?? 1)) {
                     $data['stats'][$column['name']]++;
                 }
             }
@@ -91,7 +93,7 @@ class ArticlesOverviewPlugin extends ExtendPlugin
         return $data;
     }
 
-    function onAfterTable($args)
+    public function onAfterTable($args): void
     {
         $output = "<div class='well'><div id='chart_div'></div></div>";
         $args['output'] .= $output;

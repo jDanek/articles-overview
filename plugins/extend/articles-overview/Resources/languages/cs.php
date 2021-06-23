@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'header' => 'Statistika mých článků',
 
     'stats.total' => 'Celkový počet',
@@ -13,4 +13,4 @@ return array(
     'chart.state' => 'Stav',
     'chart.diff' => 'Rozdíl',
 
-);
+];
