@@ -5,6 +5,7 @@ namespace SunlightExtend\ArticlesOverview;
 use Sunlight\Database\Database as DB;
 use Sunlight\Extend;
 use Sunlight\Plugin\ExtendPlugin;
+use Sunlight\User;
 use Sunlight\Util\Request;
 
 class ArticlesOverviewPlugin extends ExtendPlugin
@@ -75,7 +76,7 @@ class ArticlesOverviewPlugin extends ExtendPlugin
         }, $this->columns);
 
         // dotaz
-        $q = DB::query("SELECT " . implode(",", $query_columns) . " FROM " . _article_table . " WHERE author=" . _user_id);
+        $q = DB::query("SELECT " . implode(",", $query_columns) . " FROM " . DB::table('article') . " WHERE author=" . User::getId());
 
         // statistika
         $data = [];
